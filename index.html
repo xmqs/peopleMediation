@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>江宁统计局</title>
+
+    <link rel="stylesheet" href="./static/css/mui.min.css">
+    <link rel="stylesheet" type="text/css" href="./static/css/mui.picker.min.css" />
+
+    <script src="./static/js/jquery.min.js"></script>
+    <script src="./static/js/mui.min.js"></script>
+    <script src="./static/js/mui.picker.min.js"></script>
+    <style>
+      *{
+        -webkit-overflow-scrolling: touch
+      }
+    </style>
+
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+  <script>
+    var userid, token, username, idcard, tel,timestamp,isLogin;
+
+    var getParam = function (name) {
+      var search = window.location;
+      var pattern = new RegExp("[?&]" + name + "\=([^&]+)", "g");
+      var matcher = pattern.exec(search);
+      var items = null;
+      if (null != matcher) {
+        try {
+          items = decodeURIComponent(decodeURIComponent(matcher[1]));
+        } catch (e) {
+          try {
+            items = decodeURIComponent(matcher[1]);
+          } catch (e) {
+            items = matcher[1];
+          }
+        }
+      }
+      return items;
+    };
+    userid = getParam("userId");
+    username = getParam("znmh_userName");
+    if(username == null) {
+      username = window.localStorage.username;
+    }
+    idcard = getParam("znmh_idNumber");
+    if(idcard == null) {
+      idcard = window.localStorage.idcard;
+    }
+    tel = getParam("znmh_mobile");
+    if(tel == null) {
+      tel = window.localStorage.tel;
+    }
+    timestamp = getParam("timestamp");
+    if(timestamp == null) {
+      timestamp = window.localStorage.timestamp;
+    }
+    isLogin = getParam("znmh_isLogin");
+    if(isLogin == null) {
+      isLogin = window.localStorage.isLogin;
+    }
+
+
+    $.ajax({
+      //提交数据的类型 POST GET
+      type: "post",
+      async: true,
+      url: "/web-editor-web/public/rsa/getRsaUser.do",
+      contentType: "application/json;charset=UTF-8",
+      data: JSON.stringify({
+        isLogin: isLogin,
+        userid: userid,
+        idcard: idcard,
+        username: username,
+        tel: tel,
+        rsaKey:"basic_des_key"
+      }),
+      datatype: "json",
+      success: function(data) {
+        sessionStorage.setItem("userifo", JSON.stringify(data.data));
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+
+      }
+    })
+
+  </script>
+</html>
